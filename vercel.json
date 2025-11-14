@@ -1,13 +1,4 @@
 {
-  "version": 2,
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "app/api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "installCommand": "npm install && npx prisma generate",
   "buildCommand": "npm run build",
   "env": {
