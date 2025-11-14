@@ -22,7 +22,7 @@ export async function GET() {
     });
 
     // Format market data for frontend
-    const formattedMarkets = markets.map((market) => {
+    const formattedMarkets = markets.map((market: (typeof markets)[number]) => {
       return {
         id: market.id,
         title: market.title,
