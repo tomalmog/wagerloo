@@ -5,7 +5,11 @@ import crypto from "crypto";
 import { Resend } from "resend";
 
 export const runtime = "nodejs";
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+let resendClient: Resend | null = null;
+if (process.env.RESEND_API_KEY) {
+  resendClient = new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,12 +53,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const verificationUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/verify?token=${verificationToken}`;
+    const baseUrl =
+      process.env.NEXTAUTH_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    const verificationUrl = `${baseUrl}/auth/verify?token=${verificationToken}`;
 
     console.log('\n=================================');
     console.log('📧 EMAIL VERIFICATION');
     console.log('To:', email);
-    console.log('Resend configured:', !!resend);
+    console.log('Resend configured:', !!resendClient);
     console.log('=================================');
 
     // ALWAYS log to console for development
@@ -63,9 +70,9 @@ export async function POST(request: NextRequest) {
     console.log('\n');
 
     // Try to send email via Resend (optional, may fail)
-    if (resend) {
+    if (resendClient) {
       try {
-        const emailResult = await resend.emails.send({
+        const emailResult = await resendClient.emails.send({
           from: 'Wagerloo <onboarding@resend.dev>',
           to: email,
           subject: 'Verify your Wagerloo account',
