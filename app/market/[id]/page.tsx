@@ -146,19 +146,11 @@ export default function MarketDetailPage() {
                   <h3 className="text-sm font-light text-muted-foreground text-center">
                     Resume Preview
                   </h3>
-                  {market.profile.resumeUrl.startsWith("data:application/pdf") ? (
-                    <iframe
-                      src={market.profile.resumeUrl}
-                      className="w-full h-[400px] border border-border rounded-lg"
-                      title={`${market.profile.name} resume`}
-                    />
-                  ) : (
-                    <img
-                      src={market.profile.resumeUrl}
-                      alt="Resume"
-                      className="w-full rounded-lg border border-border"
-                    />
-                  )}
+                  <img
+                    src={market.profile.resumeUrl}
+                    alt="Resume"
+                    className="w-full rounded-lg border border-border"
+                  />
                 </div>
               )}
             </CardContent>

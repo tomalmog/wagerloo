@@ -89,18 +89,62 @@ export default function CreateProfilePage() {
     }
   };
 
+  const convertPdfToImage = async (file: File): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Dynamically import PDF.js
+        const pdfjsLib = await import('pdfjs-dist');
+
+        // Set worker source
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1); // Get first page
+
+        // Set scale for good quality
+        const scale = 2.0;
+        const viewport = page.getViewport({ scale });
+
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        if (!context) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        // Render PDF page to canvas
+        await page.render({
+          canvasContext: context,
+          viewport: viewport,
+        }).promise;
+
+        // Convert to base64 image with compression
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      } catch (error) {
+        console.error('Error converting PDF:', error);
+        reject(error);
+      }
+    });
+  };
+
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Handle PDFs differently (no cropping, just compression if needed)
+      // Convert PDFs to images for consistent display
       if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64String = reader.result as string;
-          setFormData({ ...formData, resumeUrl: base64String });
-          setPreviewResume(base64String);
-        };
-        reader.readAsDataURL(file);
+        try {
+          const imageData = await convertPdfToImage(file);
+          setFormData({ ...formData, resumeUrl: imageData });
+          setPreviewResume(imageData);
+        } catch (error) {
+          console.error('Error converting PDF:', error);
+          alert('Failed to process PDF. Please try uploading as an image instead.');
+        }
       } else {
         // Crop image resumes to 8.5:11 aspect ratio (letter size)
         try {
@@ -238,21 +282,11 @@ export default function CreateProfilePage() {
                   </div>
                   {previewResume && (
                     <div className="flex justify-center">
-                      {previewResume.startsWith('data:application/pdf') ? (
-                        <div className="w-full border-2 border-border rounded-lg overflow-hidden">
-                          <iframe
-                            src={previewResume}
-                            className="w-full h-96"
-                            title="Resume PDF Preview"
-                          />
-                        </div>
-                      ) : (
-                        <img
-                          src={previewResume}
-                          alt="Resume preview"
-                          className="w-full object-contain border-2 border-border rounded-lg"
-                        />
-                      )}
+                      <img
+                        src={previewResume}
+                        alt="Resume preview"
+                        className="w-full object-contain border-2 border-border rounded-lg"
+                      />
                     </div>
                   )}
                 </div>
