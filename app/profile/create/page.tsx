@@ -121,7 +121,7 @@ export default function CreateProfilePage() {
         await page.render({
           canvasContext: context,
           viewport: viewport,
-        }).promise;
+        } as any).promise;
 
         // Convert to base64 image with compression
         resolve(canvas.toDataURL('image/jpeg', 0.85));
