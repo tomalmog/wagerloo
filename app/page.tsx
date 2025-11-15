@@ -156,7 +156,7 @@ export default function Home() {
       <main className="min-h-screen py-4 sm:py-12 dot-grid">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between mb-4 sm:mb-8">
-            <h1 className="text-xl sm:text-2xl font-light">Wagerloo</h1>
+            <h1 className="text-xl sm:text-2xl font-light">WagerLoo</h1>
             {session && (
               <div className="flex gap-2">
                 <Link

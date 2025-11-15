@@ -74,11 +74,11 @@ export async function POST(request: NextRequest) {
     if (brevoClient) {
       try {
         const sendSmtpEmail = new brevo.SendSmtpEmail();
-        sendSmtpEmail.sender = { name: "Wagerloo", email: "tom.almog.dev@gmail.com" };
+        sendSmtpEmail.sender = { name: "WagerLoo", email: "tom.almog.dev@gmail.com" };
         sendSmtpEmail.to = [{ email: email, name: name }];
-        sendSmtpEmail.subject = "Verify your Wagerloo account";
+        sendSmtpEmail.subject = "Verify your WagerLoo account";
         sendSmtpEmail.htmlContent = `
-          <h1>Welcome to Wagerloo!</h1>
+          <h1>Welcome to WagerLoo!</h1>
           <p>Hi ${name},</p>
           <p>Thanks for signing up! Please verify your email address by clicking the link below:</p>
           <a href="${verificationUrl}" style="display: inline-block; padding: 12px 24px; background-color: #000; color: #fff; text-decoration: none; border-radius: 5px;">Verify Email</a>

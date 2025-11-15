@@ -51,15 +51,15 @@ export async function POST(request: NextRequest) {
       });
 
       // Create the market with over/under voting
-      // Starting line is $22/hr
+      // Starting line is $25/hr
       const market = await tx.market.create({
         data: {
           profileId: profile.id,
           title: `${name} - Next Co-op`,
           description: `Over/under on ${name}'s next co-op salary`,
           status: "active",
-          currentLine: 22.0,
-          initialLine: 22.0,
+          currentLine: 25.0,
+          initialLine: 25.0,
           overVotes: 0,
           underVotes: 0,
         },

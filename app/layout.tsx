@@ -4,7 +4,7 @@ import { NextAuthProvider } from "@/components/providers/session-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Wagerloo - Co-op Salary Predictions",
+  title: "WagerLoo - Co-op Salary Predictions",
   description: "Predict Waterloo co-op salaries",
 };
 

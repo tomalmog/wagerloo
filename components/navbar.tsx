@@ -16,7 +16,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-4 sm:gap-8">
             <Link href="/" className="text-base sm:text-lg font-light">
-              Wagerloo
+              WagerLoo
             </Link>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">

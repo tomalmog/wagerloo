@@ -65,7 +65,7 @@ function SignInContent() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-light">Welcome Back</CardTitle>
           <CardDescription className="font-light">
-            Sign in to your Wagerloo account
+            Sign in to your WagerLoo account
           </CardDescription>
         </CardHeader>
         <CardContent>
