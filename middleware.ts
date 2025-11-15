@@ -32,7 +32,6 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if user has a profile (from session)
-  // @ts-ignore - hasProfile is added in session callback
   if (!session.user.hasProfile) {
     return NextResponse.redirect(new URL("/profile/create", request.url));
   }
