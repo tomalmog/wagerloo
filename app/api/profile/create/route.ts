@@ -17,6 +17,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { name, profilePicture, resumeUrl } = body;
 
+    // Check if user already has a profile
+    const existingProfile = await prisma.profile.findUnique({
+      where: { userId },
+    });
+
+    if (existingProfile) {
+      return NextResponse.json(
+        { error: "You already have a profile. Each user can only create one profile." },
+        { status: 400 }
+      );
+    }
+
     console.log('Creating profile with:', {
       userId,
       name,

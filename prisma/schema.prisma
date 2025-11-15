@@ -21,7 +21,7 @@ model User {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
-  profiles      Profile[]
+  profile       Profile?
   votes         Vote[]
   positions     Position[]
   transactions  Transaction[]
@@ -29,7 +29,7 @@ model User {
 
 model Profile {
   id            String      @id @default(cuid())
-  userId        String
+  userId        String      @unique
   name          String
   profilePicture String?    // URL or base64 encoded image
   resumeUrl     String?

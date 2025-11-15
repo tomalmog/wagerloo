@@ -54,13 +54,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get current market state
+    // Get current market state with profile
     const market = await prisma.market.findUnique({
       where: { id: marketId },
+      include: {
+        profile: true,
+      },
     });
 
     if (!market) {
       return NextResponse.json({ error: "Market not found" }, { status: 404 });
+    }
+
+    // Prevent users from voting on their own profile
+    if (market.profile.userId === userId) {
+      return NextResponse.json(
+        { error: "You cannot vote on your own profile" },
+        { status: 403 }
+      );
     }
 
     // Calculate new vote counts
