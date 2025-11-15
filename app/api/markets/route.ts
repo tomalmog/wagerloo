@@ -15,6 +15,11 @@ export async function GET() {
             name: true,
             profilePicture: true,
             resumeUrl: true,
+            user: {
+              select: {
+                email: true,
+              },
+            },
           },
         },
       },

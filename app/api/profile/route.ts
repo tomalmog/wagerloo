@@ -17,6 +17,13 @@ export async function GET() {
       where: {
         userId: userId,
       },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
     });
 
     if (!profile) {

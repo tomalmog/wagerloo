@@ -4,11 +4,13 @@ import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/providers/theme-provider";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
 
   return (
     <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -18,6 +20,28 @@ export function Navbar() {
             <Link href="/" className="text-base sm:text-lg font-light">
               WagerLoo
             </Link>
+            {session && session.user.hasProfile && (
+              <div className="hidden sm:flex items-center gap-4">
+                <Link
+                  href="/"
+                  className={`text-sm font-light hover:text-foreground transition-colors ${pathname === '/' ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  Browse
+                </Link>
+                <Link
+                  href="/profile"
+                  className={`text-sm font-light hover:text-foreground transition-colors ${pathname === '/profile' ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/leaderboard"
+                  className={`text-sm font-light hover:text-foreground transition-colors ${pathname === '/leaderboard' ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  Leaderboard
+                </Link>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Button

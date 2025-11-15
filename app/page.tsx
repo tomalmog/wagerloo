@@ -18,6 +18,9 @@ interface Market {
     name: string;
     profilePicture?: string;
     resumeUrl?: string;
+    user: {
+      email: string;
+    };
   };
   currentLine: number;
   overVotes: number;
@@ -157,17 +160,7 @@ export default function Home() {
       <main className="min-h-screen py-4 sm:py-12 dot-grid">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between mb-4 sm:mb-8">
-            <h1 className="text-xl sm:text-2xl font-light">WagerLoo</h1>
-            {session && (
-              <div className="flex gap-2">
-                <Link
-                  href="/profile/create"
-                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-light border border-border rounded-md hover:bg-muted transition-colors"
-                >
-                  Create
-                </Link>
-              </div>
-            )}
+            <h1 className="text-xl sm:text-2xl font-light">Browse Profiles</h1>
           </div>
 
           {markets.length === 0 || !isValidMarket ? (
@@ -209,9 +202,14 @@ export default function Home() {
                           className="w-full max-w-md object-cover rounded-lg"
                         />
                       )}
-                      <CardTitle className="text-3xl font-light text-center">
-                        {currentMarket.profile.name}
-                      </CardTitle>
+                      <div className="text-center">
+                        <CardTitle className="text-3xl font-light">
+                          {currentMarket.profile.name}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground mt-2 font-light">
+                          {currentMarket.profile.user.email}
+                        </p>
+                      </div>
                     </div>
                   )}
 
