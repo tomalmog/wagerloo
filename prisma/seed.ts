@@ -8,11 +8,27 @@ const prisma = new PrismaClient();
 async function downloadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     https.get(url, (response) => {
+      // Follow redirects
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        const redirectUrl = response.headers.location;
+        if (redirectUrl) {
+          downloadImageAsBase64(redirectUrl).then(resolve).catch(reject);
+          return;
+        }
+      }
+
       const chunks: Buffer[] = [];
       response.on('data', (chunk) => chunks.push(chunk));
       response.on('end', () => {
         const buffer = Buffer.concat(chunks);
-        const base64 = `data:image/jpeg;base64,${buffer.toString('base64')}`;
+        // Detect image type from buffer
+        let mimeType = 'image/png';
+        if (buffer[0] === 0xFF && buffer[1] === 0xD8) {
+          mimeType = 'image/jpeg';
+        } else if (buffer[0] === 0x89 && buffer[1] === 0x50) {
+          mimeType = 'image/png';
+        }
+        const base64 = `data:${mimeType};base64,${buffer.toString('base64')}`;
         resolve(base64);
       });
       response.on('error', reject);
@@ -90,12 +106,10 @@ async function main() {
     console.log(`Creating user ${i + 1}/${testUsers.length}: ${testUser.name}`);
 
     try {
-      // Use Unsplash for profile pictures with 9:16 aspect ratio (portrait)
-      // Using random portraits with seed for consistency
-      const imageUrl = `https://source.unsplash.com/1080x1920/?portrait,face&sig=${i}`;
-
       console.log(`  Downloading profile picture...`);
-      const profilePicture = await downloadImageAsBase64(imageUrl);
+      // Use DiceBear avatars - they're reliable and generate unique avatars based on seed
+      const avatarUrl = `https://api.dicebear.com/7.x/avataaars/png?seed=${encodeURIComponent(testUser.name)}&size=400`;
+      const profilePicture = await downloadImageAsBase64(avatarUrl);
 
       // Create user
       const newUser = await prisma.user.upsert({
