@@ -99,6 +99,9 @@ export default function Home() {
 
         // Automatically move to next profile after 2 seconds
         setTimeout(() => {
+          // Smooth scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
           // Remove current profile from list (Tinder-style)
           const newMarkets = markets.filter((_, index) => index !== currentIndex);
           setMarkets(newMarkets);
