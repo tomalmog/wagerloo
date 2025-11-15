@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 
 export async function middleware(request: NextRequest) {
   const session = await auth();
 
   // Allow unauthenticated users to access public routes
-  if (!session?.user?.id) {
+  if (!session?.user) {
     return NextResponse.next();
   }
 
-  const userId = session.user.id as string;
   const path = request.nextUrl.pathname;
 
   // Allow access to auth routes, profile creation, and API routes
@@ -21,6 +19,7 @@ export async function middleware(request: NextRequest) {
     "/auth/verify",
     "/auth/verify-email",
     "/profile/create",
+    "/profile/edit",
     "/api/",
   ];
 
@@ -32,18 +31,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if user has a profile
-  try {
-    const profile = await prisma.profile.findUnique({
-      where: { userId },
-    });
-
-    // If user doesn't have a profile, redirect to profile creation
-    if (!profile) {
-      return NextResponse.redirect(new URL("/profile/create", request.url));
-    }
-  } catch (error) {
-    console.error("Middleware error checking profile:", error);
+  // Check if user has a profile (from session)
+  // @ts-ignore - hasProfile is added in session callback
+  if (!session.user.hasProfile) {
+    return NextResponse.redirect(new URL("/profile/create", request.url));
   }
 
   return NextResponse.next();

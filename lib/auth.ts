@@ -66,6 +66,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
+
+        // Check if user has a profile and add to session
+        const profile = await prisma.profile.findUnique({
+          where: { userId: token.sub },
+          select: { id: true },
+        });
+
+        session.user.hasProfile = !!profile;
       }
       return session;
     },
