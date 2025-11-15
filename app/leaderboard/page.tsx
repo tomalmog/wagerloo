@@ -40,12 +40,13 @@ export default function LeaderboardPage() {
           }))
           .sort((a: any, b: any) => b.currentLine - a.currentLine);
 
-        // Update ranks after sorting
-        sorted.forEach((entry: any, index: number) => {
+        // Update ranks after sorting and take top 25
+        const top25 = sorted.slice(0, 25);
+        top25.forEach((entry: any, index: number) => {
           entry.rank = index + 1;
         });
 
-        setLeaderboard(sorted);
+        setLeaderboard(top25);
       }
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
@@ -62,7 +63,7 @@ export default function LeaderboardPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-light mb-2">Leaderboard</h1>
             <p className="text-sm text-muted-foreground font-light">
-              Top predicted hourly wages for next co-op
+              Top 25 predicted hourly wages for next co-op
             </p>
           </div>
 
