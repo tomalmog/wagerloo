@@ -75,7 +75,7 @@ model Vote {
   user            User        @relation(fields: [userId], references: [id])
   market          Market      @relation(fields: [marketId], references: [id])
 
-  @@unique([userId, marketId]) // One vote per user per market
+  @@index([userId, marketId]) // Allow multiple votes per user per market
 }
 
 // Keep old models for backward compatibility with existing data

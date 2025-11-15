@@ -30,27 +30,10 @@ export async function POST(request: NextRequest) {
       select: { emailVerified: true },
     });
 
-    if (!user ||!user.emailVerified) {
+    if (!user || !user.emailVerified) {
       return NextResponse.json(
         { error: "Please verify your email before voting" },
         { status: 403 }
-      );
-    }
-
-    // Check if user already voted on this market
-    const existingVote = await prisma.vote.findUnique({
-      where: {
-        userId_marketId: {
-          userId,
-          marketId,
-        },
-      },
-    });
-
-    if (existingVote) {
-      return NextResponse.json(
-        { error: "You've already voted on this profile" },
-        { status: 400 }
       );
     }
 
