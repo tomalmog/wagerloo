@@ -23,18 +23,41 @@ async function downloadImageAsBase64(url: string): Promise<string> {
 // Helper function to crop image to 9:16 aspect ratio
 // For simplicity, we'll just use the images directly from Unsplash with aspect ratio parameter
 
-const testUsers = [
-  { name: "Alex Chen", email: "alex.chen@uwaterloo.ca" },
-  { name: "Sarah Johnson", email: "sarah.johnson@uwaterloo.ca" },
-  { name: "Michael Kim", email: "michael.kim@uwaterloo.ca" },
-  { name: "Emily Zhang", email: "emily.zhang@uwaterloo.ca" },
-  { name: "David Patel", email: "david.patel@uwaterloo.ca" },
-  { name: "Jessica Liu", email: "jessica.liu@uwaterloo.ca" },
-  { name: "Ryan Martinez", email: "ryan.martinez@uwaterloo.ca" },
-  { name: "Olivia Brown", email: "olivia.brown@uwaterloo.ca" },
-  { name: "Daniel Lee", email: "daniel.lee@uwaterloo.ca" },
-  { name: "Sophia Nguyen", email: "sophia.nguyen@uwaterloo.ca" },
+// Generate 100 test users
+const firstNames = [
+  "Alex", "Sarah", "Michael", "Emily", "David", "Jessica", "Ryan", "Olivia", "Daniel", "Sophia",
+  "James", "Emma", "William", "Ava", "Benjamin", "Isabella", "Lucas", "Mia", "Henry", "Charlotte",
+  "Alexander", "Amelia", "Sebastian", "Harper", "Jack", "Evelyn", "Owen", "Abigail", "Theodore", "Ella",
+  "Matthew", "Scarlett", "Samuel", "Grace", "Joseph", "Chloe", "John", "Victoria", "Christopher", "Madison",
+  "Dylan", "Luna", "Nathan", "Lily", "Isaac", "Hannah", "Gabriel", "Zoe", "Anthony", "Penelope",
+  "Joshua", "Riley", "Andrew", "Layla", "Elijah", "Nora", "Levi", "Lillian", "Julian", "Aria",
+  "Carter", "Ellie", "Wyatt", "Hazel", "Luke", "Aurora", "Grayson", "Violet", "Jackson", "Nova",
+  "Lincoln", "Stella", "Asher", "Lucy", "Leo", "Savannah", "Oliver", "Claire", "Ethan", "Skylar",
+  "Aiden", "Bella", "Noah", "Paisley", "Mason", "Everly", "Liam", "Anna", "Jacob", "Caroline",
+  "Logan", "Genesis", "Jayden", "Aaliyah", "Hunter", "Kennedy", "Camden", "Kinsley", "Caleb", "Allison"
 ];
+
+const lastNames = [
+  "Chen", "Johnson", "Kim", "Zhang", "Patel", "Liu", "Martinez", "Brown", "Lee", "Nguyen",
+  "Smith", "Garcia", "Rodriguez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
+  "Thompson", "White", "Lopez", "Gonzalez", "Harris", "Clark", "Lewis", "Robinson", "Walker", "Perez",
+  "Hall", "Young", "Allen", "Sanchez", "Wright", "King", "Scott", "Green", "Baker", "Adams",
+  "Nelson", "Hill", "Ramirez", "Campbell", "Mitchell", "Roberts", "Carter", "Phillips", "Evans", "Turner",
+  "Torres", "Parker", "Collins", "Edwards", "Stewart", "Flores", "Morris", "Nguyen", "Murphy", "Rivera",
+  "Cook", "Rogers", "Morgan", "Peterson", "Cooper", "Reed", "Bailey", "Bell", "Gomez", "Kelly",
+  "Howard", "Ward", "Cox", "Diaz", "Richardson", "Wood", "Watson", "Brooks", "Bennett", "Gray",
+  "James", "Reyes", "Cruz", "Hughes", "Price", "Myers", "Long", "Foster", "Sanders", "Ross",
+  "Morales", "Powell", "Sullivan", "Russell", "Ortiz", "Jenkins", "Gutierrez", "Perry", "Butler", "Barnes"
+];
+
+const testUsers = [];
+for (let i = 0; i < 100; i++) {
+  const firstName = firstNames[i % firstNames.length];
+  const lastName = lastNames[i % lastNames.length];
+  const name = `${firstName} ${lastName}`;
+  const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i > 99 ? i : ''}@uwaterloo.ca`;
+  testUsers.push({ name, email });
+}
 
 async function main() {
   console.log('Starting seed...');
