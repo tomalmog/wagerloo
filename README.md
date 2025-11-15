@@ -1,21 +1,57 @@
-# Wagerloo - Co-op Salary Prediction Market
+# Wagerloo
 
-A prediction market platform where users can bet on Waterloo co-op salaries using fake money. Built with Next.js, Prisma, and Tailwind CSS.
+A platform for University of Waterloo students to create professional profiles and receive community feedback on their expected co-op salary through a voting-based prediction system.
 
-## Features
+## Overview
 
-- **User Authentication**: Simple email-based authentication (no password required for demo)
-- **Profile Creation**: Upload your co-op profile (name, program, year, bio, previous co-ops)
-- **Prediction Markets**: Bet on salary ranges using an automated market maker (AMM)
-- **Real-time Odds**: Probabilities update dynamically based on betting activity
-- **Virtual Currency**: Each user starts with $10,000 in fake money
+Wagerloo allows students to showcase their skills, experience, and resumes while other students vote on whether they believe the predicted co-op salary is over or under the current market consensus. The voting mechanism creates a dynamic salary prediction that adjusts based on community input, providing students with data-driven insights into their market value.
+
+## Core Features
+
+- **Profile System**: Students create profiles with biographical information, profile pictures, and resume uploads
+- **Over/Under Voting**: Community members vote on whether predicted salaries are over or under valued
+- **Dynamic Line Movement**: Salary predictions adjust automatically based on voting patterns using a multi-round voting algorithm
+- **Leaderboard**: Rankings of top profiles based on community consensus
+- **Email Verification**: Secure authentication with email verification workflow
+
+## Tech Stack
+
+### Frontend
+- **Next.js 16** (App Router)
+- **React 19**
+- **TypeScript**
+- **Tailwind CSS** for styling
+- **shadcn/ui** component library
+
+### Backend & Infrastructure
+- **Next.js API Routes**
+- **NextAuth v5** for authentication
+- **Prisma ORM** for database management
+- **PostgreSQL** database
+- **Brevo** for transactional emails
+- **Vercel** for deployment
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- npm or yarn
+- Node.js 18 or higher
+- PostgreSQL database
+- npm or yarn package manager
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Email service (Brevo)
+BREVO_API_KEY="your-brevo-api-key"
+EMAIL_FROM="noreply@yourdomain.com"
+```
 
 ### Installation
 
@@ -26,79 +62,87 @@ npm install
 
 2. Set up the database:
 ```bash
-npx prisma migrate dev
+npx prisma db push
+npx prisma generate
 ```
 
-3. Start the development server:
+3. (Optional) Seed the database with sample data:
+```bash
+npm run seed
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) (or the port shown in terminal)
+The application will be available at `http://localhost:3000`
 
-## How to Use
+## Database Schema
 
-1. **Sign In**: Enter your email (no password needed for demo)
-2. **Create a Profile**: Click "Create Profile" and fill in your information
-3. **Browse Markets**: View all active prediction markets on the home page
-4. **Place Bets**: Click on a market to view details and buy shares in different wage ranges
-5. **Watch Odds Change**: As more people bet, the probabilities adjust automatically
+The application uses the following primary data models:
 
-## How the Betting Works
-
-This app uses a simple Automated Market Maker (AMM) model:
-
-- Each wage range starts with 100 shares
-- Price per share = current probability (shares / total shares)
-- When you buy shares, the price increases for that outcome
-- Winning shares will eventually pay out when the market resolves
-
-## Tech Stack
-
-- **Frontend**: Next.js 14, React, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Database**: SQLite (via Prisma ORM)
-- **Authentication**: NextAuth.js
-- **State Management**: React hooks
+- **User**: Authentication and account management
+- **Profile**: Student profiles including name, picture, and resume
+- **Market**: Voting markets for each profile with salary predictions
+- **Vote**: Individual votes cast by users (over/under)
 
 ## Project Structure
 
 ```
 wagerloo-app/
-├── app/                      # Next.js app directory
-│   ├── api/                  # API routes
-│   ├── auth/                 # Authentication pages
-│   ├── market/               # Market detail pages
-│   └── profile/              # Profile pages
-├── components/               # React components
-│   ├── ui/                   # shadcn/ui components
-│   └── navbar.tsx            # Navigation bar
-├── lib/                      # Utility functions
-│   ├── auth.ts               # NextAuth configuration
-│   ├── prisma.ts             # Prisma client
-│   └── utils.ts              # Helper functions
-└── prisma/                   # Database schema and migrations
-    └── schema.prisma         # Database models
+├── app/
+│   ├── api/              # API routes for voting, markets, profiles
+│   ├── auth/             # Authentication pages (signin, register, verify)
+│   ├── market/           # Individual market pages
+│   ├── profile/          # Profile creation and editing
+│   ├── leaderboard/      # Rankings page
+│   └── page.tsx          # Main browse interface
+├── components/
+│   ├── ui/               # Reusable UI components
+│   ├── navbar.tsx        # Navigation component
+│   └── profile-guard.tsx # Profile requirement check
+├── lib/
+│   ├── auth.ts           # NextAuth configuration
+│   └── prisma.ts         # Prisma client singleton
+└── prisma/
+    ├── schema.prisma     # Database schema
+    ├── seed.ts           # Database seeding scripts
+    └── cleanup.ts        # Database maintenance utilities
 ```
 
-## Database Schema
+## How It Works
 
-- **User**: User accounts with balance
-- **Profile**: Co-op profiles that can be bet on
-- **Market**: Prediction markets for each profile
-- **Outcome**: Wage range outcomes (e.g., $30-35/hr)
-- **Position**: User's shares in each outcome
-- **Transaction**: History of all bets
+1. **Profile Creation**: Users register with their email, verify their account, and create a profile with their information
+2. **Market Generation**: Each profile automatically gets a market with an initial salary prediction
+3. **Voting**: Other users browse profiles and vote "over" or "under" on the predicted salary
+4. **Line Movement**: The prediction adjusts after each vote based on the voting distribution
+5. **Leaderboard**: Profiles are ranked based on their final predicted salaries and voting activity
 
-## Future Enhancements
+## Development Commands
 
-- Resume/PDF upload functionality
-- Market resolution with proof of salary
-- Leaderboard for top traders
-- Portfolio view showing all your positions
-- Sell shares functionality
-- Charts showing odds history over time
-- Social features (comments, profiles)
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Database commands
+npm run seed              # Seed with sample data
+npm run cleanup          # Clean up database
+
+# Prisma commands
+npx prisma studio        # Open database GUI
+npx prisma db push       # Push schema changes
+```
+
+## Deployment
+
+The application is configured for deployment on Vercel. Ensure all environment variables are set in your Vercel project settings before deploying.
 
 ## License
 
