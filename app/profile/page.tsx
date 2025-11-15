@@ -136,18 +136,33 @@ export default function MyProfilePage() {
                       <object
                         data={profile.resumeUrl}
                         type="application/pdf"
-                        className="w-full h-[600px] border-2 border-border rounded-lg"
+                        className="w-full h-[500px] border-2 border-border rounded-lg"
                       >
-                        <p className="p-4 text-center text-muted-foreground">
-                          Your browser doesn't support PDF viewing.{' '}
-                          <a
-                            href={profile.resumeUrl}
-                            download="resume.pdf"
-                            className="underline"
-                          >
-                            Download PDF
-                          </a>
-                        </p>
+                        <div className="w-full h-[500px] flex items-center justify-center border-2 border-border rounded-lg bg-muted/20">
+                          <div className="text-center p-6">
+                            <svg
+                              className="w-16 h-16 mx-auto mb-4 text-muted-foreground"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                              />
+                            </svg>
+                            <p className="font-light mb-2">Resume PDF</p>
+                            <a
+                              href={profile.resumeUrl}
+                              download="resume.pdf"
+                              className="text-sm text-primary underline"
+                            >
+                              Download to view
+                            </a>
+                          </div>
+                        </div>
                       </object>
                     ) : (
                       <img
