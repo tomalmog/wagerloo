@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     const baseUrl =
       process.env.NEXTAUTH_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-    const verificationUrl = `${baseUrl}/auth/verify?token=${verificationToken}`;
+    const verificationUrl = `${baseUrl}/api/auth/verify?token=${verificationToken}`;
 
     console.log('\n=================================');
     console.log('📧 EMAIL VERIFICATION');
