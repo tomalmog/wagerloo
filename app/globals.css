@@ -49,9 +49,8 @@
     text-wrap: balance;
   }
 
-  /* Dotted grid background */
+  /* Subtle gradient background */
   .dot-grid {
-    background-image: radial-gradient(rgb(var(--border)) 1px, transparent 1px);
-    background-size: 16px 16px;
+    background: linear-gradient(to bottom, rgb(var(--background)), rgb(var(--muted)));
   }
 }
