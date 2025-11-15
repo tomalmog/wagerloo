@@ -37,9 +37,9 @@ function VerifyContent() {
       if (response.ok) {
         setStatus("success");
         setMessage("Your email has been verified successfully!");
-        // Redirect to signin after 2 seconds
+        // Redirect to main page after 2 seconds
         setTimeout(() => {
-          router.push("/auth/signin");
+          router.push("/");
         }, 2000);
       } else {
         setStatus("error");
@@ -62,7 +62,7 @@ function VerifyContent() {
           </CardTitle>
           <CardDescription className="font-light">
             {status === "loading" && "Please wait while we verify your email"}
-            {status === "success" && "You can now sign in to your account"}
+            {status === "success" && "Redirecting to the main page"}
             {status === "error" && "There was a problem verifying your email"}
           </CardDescription>
         </CardHeader>
@@ -76,7 +76,7 @@ function VerifyContent() {
             <div className="text-center space-y-4">
               <p className="text-sm font-light text-muted-foreground">{message}</p>
               <p className="text-xs font-light text-muted-foreground">
-                Redirecting to sign in...
+                Redirecting to main page...
               </p>
             </div>
           )}
