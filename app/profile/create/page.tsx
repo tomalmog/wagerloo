@@ -92,27 +92,26 @@ export default function CreateProfilePage() {
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsLoading(true);
-
-      // Only accept images - PDFs are not supported
+      // Handle PDFs without conversion - just store as base64
       if (file.type === 'application/pdf') {
-        alert('PDFs are not supported. Please take a screenshot of your resume and upload it as an image (PNG, JPG, etc.)');
-        setIsLoading(false);
-        e.target.value = ''; // Clear the file input
-        return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          setFormData({ ...formData, resumeUrl: base64String });
+          setPreviewResume(base64String);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Crop image resumes to 8.5:11 aspect ratio (letter size)
+        try {
+          const croppedImage = await cropImageToAspectRatio(file, 8.5/11);
+          setFormData({ ...formData, resumeUrl: croppedImage });
+          setPreviewResume(croppedImage);
+        } catch (error) {
+          console.error('Error cropping resume:', error);
+          alert('Failed to process resume image');
+        }
       }
-
-      // Crop image resumes to 8.5:11 aspect ratio (letter size)
-      try {
-        const croppedImage = await cropImageToAspectRatio(file, 8.5/11);
-        setFormData({ ...formData, resumeUrl: croppedImage });
-        setPreviewResume(croppedImage);
-      } catch (error) {
-        console.error('Error cropping resume:', error);
-        alert('Failed to process resume image');
-      }
-
-      setIsLoading(false);
     }
   };
 
@@ -222,7 +221,7 @@ export default function CreateProfilePage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-light text-muted-foreground">
-                      Resume (Screenshot)
+                      Resume (PDF or Image)
                     </label>
                     <label htmlFor="resume-upload">
                       <span className="px-4 py-2 text-xs font-light border border-border rounded-md hover:bg-muted transition-colors cursor-pointer">
@@ -232,18 +231,28 @@ export default function CreateProfilePage() {
                     <input
                       id="resume-upload"
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.pdf"
                       onChange={handleResumeUpload}
                       className="hidden"
                     />
                   </div>
                   {previewResume && (
                     <div className="flex justify-center">
-                      <img
-                        src={previewResume}
-                        alt="Resume preview"
-                        className="w-full object-contain border-2 border-border rounded-lg"
-                      />
+                      {previewResume.startsWith('data:application/pdf') ? (
+                        <div className="w-full border-2 border-border rounded-lg overflow-hidden">
+                          <iframe
+                            src={previewResume}
+                            className="w-full h-96"
+                            title="Resume PDF Preview"
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          src={previewResume}
+                          alt="Resume preview"
+                          className="w-full object-contain border-2 border-border rounded-lg"
+                        />
+                      )}
                     </div>
                   )}
                 </div>
