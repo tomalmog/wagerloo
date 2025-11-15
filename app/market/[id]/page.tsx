@@ -146,11 +146,45 @@ export default function MarketDetailPage() {
                   <h3 className="text-sm font-light text-muted-foreground text-center">
                     Resume Preview
                   </h3>
-                  <img
-                    src={market.profile.resumeUrl}
-                    alt="Resume"
-                    className="w-full rounded-lg border border-border"
-                  />
+                  {market.profile.resumeUrl.startsWith('data:application/pdf') ? (
+                    <object
+                      data={market.profile.resumeUrl}
+                      type="application/pdf"
+                      className="w-full h-[400px] border border-border rounded-lg"
+                    >
+                      <div className="w-full h-[400px] flex items-center justify-center border-2 border-border rounded-lg bg-muted/20">
+                        <div className="text-center p-6">
+                          <svg
+                            className="w-16 h-16 mx-auto mb-4 text-muted-foreground"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <p className="font-light text-sm text-muted-foreground mb-2">PDF Resume</p>
+                          <a
+                            href={market.profile.resumeUrl}
+                            download="resume.pdf"
+                            className="text-sm text-primary underline"
+                          >
+                            Download to view
+                          </a>
+                        </div>
+                      </div>
+                    </object>
+                  ) : (
+                    <img
+                      src={market.profile.resumeUrl}
+                      alt="Resume"
+                      className="w-full rounded-lg border border-border"
+                    />
+                  )}
                 </div>
               )}
             </CardContent>

@@ -89,70 +89,18 @@ export default function CreateProfilePage() {
     }
   };
 
-  const convertPdfToImage = async (file: File): Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Dynamically import PDF.js
-        const pdfjsLib = await import('pdfjs-dist');
-
-        // Set worker source using jsdelivr CDN (more reliable)
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
-
-        const arrayBuffer = await file.arrayBuffer();
-        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-        const pdf = await loadingTask.promise;
-        const page = await pdf.getPage(1); // Get first page
-
-        // Set scale for good quality
-        const scale = 2.0;
-        const viewport = page.getViewport({ scale });
-
-        // Create canvas
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        if (!context) {
-          reject(new Error('Could not get canvas context'));
-          return;
-        }
-
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        // Render PDF page to canvas
-        const renderContext = {
-          canvasContext: context,
-          viewport: viewport,
-        };
-        await page.render(renderContext as any).promise;
-
-        // Convert to base64 image with compression
-        const imageData = canvas.toDataURL('image/jpeg', 0.85);
-        resolve(imageData);
-      } catch (error) {
-        console.error('Error converting PDF:', error);
-        reject(error);
-      }
-    });
-  };
-
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsLoading(true);
-
-      // Convert PDFs to images for consistent display
+      // Handle PDFs - store as base64 without conversion
       if (file.type === 'application/pdf') {
-        try {
-          const imageData = await convertPdfToImage(file);
-          setFormData({ ...formData, resumeUrl: imageData });
-          setPreviewResume(imageData);
-        } catch (error) {
-          console.error('Error converting PDF:', error);
-          alert(`Failed to process PDF: ${error instanceof Error ? error.message : 'Unknown error'}. Please try uploading as a screenshot instead.`);
-          setIsLoading(false);
-          e.target.value = ''; // Clear the file input
-          return;
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result as string;
+          setFormData({ ...formData, resumeUrl: base64String });
+          setPreviewResume(base64String);
+        };
+        reader.readAsDataURL(file);
       } else {
         // Crop image resumes to 8.5:11 aspect ratio (letter size)
         try {
@@ -164,8 +112,6 @@ export default function CreateProfilePage() {
           alert('Failed to process resume image');
         }
       }
-
-      setIsLoading(false);
     }
   };
 
@@ -292,11 +238,21 @@ export default function CreateProfilePage() {
                   </div>
                   {previewResume && (
                     <div className="flex justify-center">
-                      <img
-                        src={previewResume}
-                        alt="Resume preview"
-                        className="w-full object-contain border-2 border-border rounded-lg"
-                      />
+                      {previewResume.startsWith('data:application/pdf') ? (
+                        <div className="w-full border-2 border-border rounded-lg overflow-hidden">
+                          <iframe
+                            src={previewResume}
+                            className="w-full h-96"
+                            title="Resume PDF Preview"
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          src={previewResume}
+                          alt="Resume preview"
+                          className="w-full object-contain border-2 border-border rounded-lg"
+                        />
+                      )}
                     </div>
                   )}
                 </div>
