@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Navbar } from "@/components/navbar";
 
 export default function CreateProfilePage() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -133,6 +133,8 @@ export default function CreateProfilePage() {
 
       if (response.ok) {
         const data = await response.json();
+        // Refresh the session to update hasProfile flag
+        await update();
         router.push('/');
       } else {
         const errorData = await response.json();
