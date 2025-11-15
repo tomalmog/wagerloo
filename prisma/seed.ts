@@ -66,7 +66,7 @@ const lastNames = [
   "Morales", "Powell", "Sullivan", "Russell", "Ortiz", "Jenkins", "Gutierrez", "Perry", "Butler", "Barnes"
 ];
 
-const testUsers = [];
+const testUsers: { name: string; email: string }[] = [];
 for (let i = 0; i < 100; i++) {
   const firstName = firstNames[i % firstNames.length];
   const lastName = lastNames[i % lastNames.length];
