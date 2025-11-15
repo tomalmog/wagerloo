@@ -243,11 +243,35 @@ export default function Home() {
                   {currentSlide === 1 && (
                     <div className="flex flex-col items-center justify-center flex-1 min-h-[500px]">
                       {currentMarket.profile.resumeUrl ? (
-                        <img
-                          src={currentMarket.profile.resumeUrl}
-                          alt="Resume"
-                          className="w-full max-h-[500px] object-contain rounded-lg"
-                        />
+                        currentMarket.profile.resumeUrl.startsWith('data:application/pdf') ? (
+                          <div className="w-full h-[500px] flex items-center justify-center border-2 border-border rounded-lg bg-muted/20">
+                            <div className="text-center p-6">
+                              <svg
+                                className="w-16 h-16 mx-auto mb-4 text-muted-foreground"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                />
+                              </svg>
+                              <p className="font-light text-sm text-muted-foreground">
+                                This profile has an old PDF resume.<br />
+                                User needs to re-upload for better display.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={currentMarket.profile.resumeUrl}
+                            alt="Resume"
+                            className="w-full max-h-[500px] object-contain rounded-lg"
+                          />
+                        )
                       ) : (
                         <p className="text-muted-foreground">No resume uploaded</p>
                       )}

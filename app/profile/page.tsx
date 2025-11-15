@@ -132,11 +132,35 @@ export default function MyProfilePage() {
                 {profile.resumeUrl && (
                   <div>
                     <h3 className="text-sm font-medium mb-2">Resume</h3>
-                    <img
-                      src={profile.resumeUrl}
-                      alt="Resume"
-                      className="w-full border rounded-lg"
-                    />
+                    {profile.resumeUrl.startsWith('data:application/pdf') ? (
+                      <div className="w-full h-[400px] flex items-center justify-center border-2 border-border rounded-lg bg-muted/20">
+                        <div className="text-center p-6">
+                          <svg
+                            className="w-16 h-16 mx-auto mb-4 text-muted-foreground"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                            />
+                          </svg>
+                          <p className="font-light mb-2">Old PDF Resume</p>
+                          <p className="text-sm text-muted-foreground">
+                            Please create a new profile with an image resume for better display.
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <img
+                        src={profile.resumeUrl}
+                        alt="Resume"
+                        className="w-full border rounded-lg"
+                      />
+                    )}
                   </div>
                 )}
               </CardContent>

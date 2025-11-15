@@ -95,11 +95,12 @@ export default function CreateProfilePage() {
         // Dynamically import PDF.js
         const pdfjsLib = await import('pdfjs-dist');
 
-        // Set worker source
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+        // Set worker source to use unpkg CDN
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
 
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
         const page = await pdf.getPage(1); // Get first page
 
         // Set scale for good quality
@@ -118,13 +119,16 @@ export default function CreateProfilePage() {
         canvas.height = viewport.height;
 
         // Render PDF page to canvas
-        await page.render({
+        const renderContext = {
           canvasContext: context,
           viewport: viewport,
-        } as any).promise;
+        };
+        await page.render(renderContext as any).promise;
 
         // Convert to base64 image with compression
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
+        const imageData = canvas.toDataURL('image/jpeg', 0.85);
+        console.log('PDF converted successfully, image length:', imageData.length);
+        resolve(imageData);
       } catch (error) {
         console.error('Error converting PDF:', error);
         reject(error);
@@ -135,15 +139,18 @@ export default function CreateProfilePage() {
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsLoading(true);
       // Convert PDFs to images for consistent display
       if (file.type === 'application/pdf') {
         try {
+          console.log('Starting PDF conversion for file:', file.name, 'size:', file.size);
           const imageData = await convertPdfToImage(file);
+          console.log('PDF conversion complete, setting form data');
           setFormData({ ...formData, resumeUrl: imageData });
           setPreviewResume(imageData);
         } catch (error) {
           console.error('Error converting PDF:', error);
-          alert('Failed to process PDF. Please try uploading as an image instead.');
+          alert(`Failed to process PDF: ${error instanceof Error ? error.message : 'Unknown error'}. Please try uploading as an image instead.`);
         }
       } else {
         // Crop image resumes to 8.5:11 aspect ratio (letter size)
@@ -156,6 +163,7 @@ export default function CreateProfilePage() {
           alert('Failed to process resume image');
         }
       }
+      setIsLoading(false);
     }
   };
 
