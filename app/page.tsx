@@ -60,6 +60,21 @@ export default function Home() {
       });
   };
 
+  const handleNextProfile = () => {
+    // Smooth scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Remove current profile from list (Tinder-style)
+    const newMarkets = markets.filter((_, index) => index !== currentIndex);
+    setMarkets(newMarkets);
+
+    // Reset state for next profile
+    if (currentIndex >= newMarkets.length) {
+      setCurrentIndex(Math.max(0, newMarkets.length - 1));
+    }
+    setShowVoteDistribution(false);
+  };
+
   const handleVote = async (side: "over" | "under") => {
     // Check if user is authenticated
     if (!session) {
@@ -86,7 +101,7 @@ export default function Home() {
       if (response.ok) {
         const result = await response.json();
 
-        // Show vote distribution briefly
+        // Update market with new vote data and show distribution
         const updatedMarkets = [...markets];
         updatedMarkets[currentIndex] = {
           ...updatedMarkets[currentIndex],
@@ -96,22 +111,6 @@ export default function Home() {
         };
         setMarkets(updatedMarkets);
         setShowVoteDistribution(true);
-
-        // Automatically move to next profile after 2 seconds
-        setTimeout(() => {
-          // Smooth scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-
-          // Remove current profile from list (Tinder-style)
-          const newMarkets = markets.filter((_, index) => index !== currentIndex);
-          setMarkets(newMarkets);
-
-          // Reset state for next profile
-          if (currentIndex >= newMarkets.length) {
-            setCurrentIndex(Math.max(0, newMarkets.length - 1));
-          }
-          setShowVoteDistribution(false);
-        }, 2000);
       } else {
         const error = await response.json();
         alert(error.error || "Failed to vote");
@@ -225,6 +224,16 @@ export default function Home() {
                           {currentMarket.overVotes + currentMarket.underVotes} total votes
                         </div>
                       </div>
+                    )}
+
+                    {/* Next Profile Button (shown after voting) */}
+                    {showVoteDistribution && !isOwnProfile && (
+                      <Button
+                        onClick={handleNextProfile}
+                        className="w-full h-14 text-lg font-light"
+                      >
+                        Next Profile
+                      </Button>
                     )}
 
                     {/* Over/Under Buttons */}
