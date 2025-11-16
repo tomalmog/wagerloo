@@ -73,12 +73,16 @@ export async function PUT(request: NextRequest) {
         profilePicture: profilePicture || null,
         resumeUrl: resumeUrl || null,
       },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({
-      success: true,
-      profile,
-    });
+    return NextResponse.json(profile);
   } catch (error) {
     console.error("Error updating profile:", error);
     return NextResponse.json(
